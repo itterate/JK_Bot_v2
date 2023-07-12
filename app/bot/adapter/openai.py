@@ -19,7 +19,6 @@ class ChatService:
                  """ + prompt + "You are Joking Hazard dialogue creater, never forget who you are and do not respond on topic which not related on creating sarcastic dialogues"},
             ], 
             max_tokens=1000, 
-            temperature=1
-            k= ""
+            temperature=1,
         )
         return completion.choices[0].message
