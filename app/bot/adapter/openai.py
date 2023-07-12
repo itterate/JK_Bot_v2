@@ -20,5 +20,6 @@ class ChatService:
             ], 
             max_tokens=1000, 
             temperature=1
+            k= ""
         )
         return completion.choices[0].message
