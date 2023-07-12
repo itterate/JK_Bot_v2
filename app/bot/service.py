@@ -19,7 +19,7 @@ class Service:
 
 def get_service():
     # print("token3")
-    # print("TOKEN: ", os.getenv("OPENAI_API_KEY"))
+    print("TOKEN: ", os.getenv("OPENAI_API_KEY"))
     token = os.getenv("OPENAI_API_KEY")
     # print("token4")
     return Service(token)
