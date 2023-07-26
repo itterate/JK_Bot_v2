@@ -5,7 +5,6 @@ from app.utils import AppModel
 from ..service import Service, get_service
 from . import router
 
-
 class RegisterUserRequest(AppModel):
     email: str
     password: str
@@ -23,6 +22,7 @@ def register_user(
     input: RegisterUserRequest,
     svc: Service = Depends(get_service),
 ) -> dict[str, str]:
+    
     if svc.repository.get_user_by_email(input.email):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

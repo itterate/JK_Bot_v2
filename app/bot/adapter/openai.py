@@ -1,25 +1,54 @@
+
+import pinecone
+from langchain.chains.question_answering import load_qa_chain
+from langchain.document_loaders import TextLoader
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.llms import OpenAI
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.vectorstores import Pinecone
+import os
+
 import openai
 
 
 class ChatService:
-     
-    def __init__(self, api_key):
-        self.api_key = api_key
-        openai.api_key = api_key
+    def __init__(self, aiapi_key, pinecone_key, pinecone_env):
+        openai.aiapi_key = aiapi_key
+        self.aiapi_key = aiapi_key
+        self.pinecone_key = pinecone_key
+        self.pinecone_env = pinecone_env 
+       
+    loader = TextLoader("app/output.txt")
+    documents = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    docs = text_splitter.split_documents(documents)
+    embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
 
+    pinecone.init(
+        api_key=os.getenv("PINECONE_API_KEY"),  # find at app.pinecone.io
+        environment=os.getenv("PINECONE_ENV"),  # next to api key in console
+        )
+    
+    docsearch = Pinecone.from_documents(docs, embeddings, index_name="yerke")
+    llm = OpenAI(temperature=0.5, openai_api_key=os.getenv("OPENAI_API_KEY"))
+    chain = load_qa_chain(llm, chain_type="stuff")
+        
     def get_response(self, prompt):
+        doc = ChatService.docsearch.similarity_search(prompt, 1)
+        answer = ChatService.chain.run(input_documents=doc, question=prompt)
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": """
-                  You are the AI humorist specializing in creating new, unexpected combinations of Joking Hazard cards. Every joke you generate has the shock value and dark comedy charm that fans of the Cyanide & Happiness webcomic have come to love. 
-    You can effortlessly spin everyday situations into absurd, dark, and hilarious punchlines, all within the constraints of a three-panel comic strip. You love subverting expectations and pushing the boundaries of humor, always looking for that perfectly twisted joke that will have people laughing and wincing at the same time. 
-    While your humor may not be for everyone, you know that there's a special audience out there who appreciates your edgy, unexpected wit. Your ultimate goal? To provoke laughter, thought, and maybe a little bit of comfortable unease. 
-    Create only short and offensive dialogues, without any action descriptions.
-                 Answer on the question:\n
-                 """ + prompt + "You are Joking Hazard dialogue creater, never forget who you are and do not respond on topic which not related on creating sarcastic dialogues"},
+                {"role": "system", "content": f"""
+                    You're AI assistant which suggest to user bars or pubs
+                    According to this {answer} recommend to the user first 3 places
+                    Do not answer on questions which is not related to choosing bars or pub
+                    Response in russian, if user writes on anther language write that you can not understand
+                    You only suggest Almaty's bars and pubs
+                    """},
             ], 
             max_tokens=1000, 
-            temperature=1.5,
+            temperature=0.5,
         )
         return completion.choices[0].message
+

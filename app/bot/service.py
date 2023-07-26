@@ -1,25 +1,19 @@
 import os
 
 from dotenv import load_dotenv
-from pydantic import BaseSettings
 
 from .adapter.openai import ChatService
 
 load_dotenv()  # Load environment variables from .env file
 
 
-class Config(BaseSettings):
-    HERE_API_KEY: str
-
-
 class Service:
-    def __init__(self, api_key: str):
-        self.chat_service = ChatService(api_key)
-
+    def __init__(self, aiapi_key: str, pinecone_key: str, pinecone_env: str):
+        self.chat_service = ChatService(aiapi_key, pinecone_key, pinecone_env)
+        
 
 def get_service():
-    # print("token3")
-    print("TOKEN: ", os.getenv("OPENAI_API_KEY"))
-    token = os.getenv("OPENAI_API_KEY")
-    # print("token4")
-    return Service(token)
+    openai_token = os.getenv("OPENAI_API_KEY")
+    pinecone_token = os.getenv("PINECONE_API_KEY")
+    pinecone_env_token = os.getenv("PINECONE_ENV")
+    return Service(openai_token, pinecone_token, pinecone_env_token)

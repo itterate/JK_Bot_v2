@@ -18,6 +18,9 @@ orjson = "^3.9.1"
 boto3 = "^1.26.153"
 pandas = "^2.0.3"
 openai = "^0.27.8"
+langchain = "^0.0.240"
+tiktoken = "^0.4.0"
+pinecone-client = "^2.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
