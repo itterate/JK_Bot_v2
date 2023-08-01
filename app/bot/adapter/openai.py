@@ -1,4 +1,6 @@
 
+import os
+
 import pinecone
 from langchain.chains.question_answering import load_qa_chain
 from langchain.document_loaders import TextLoader
@@ -6,7 +8,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Pinecone
-import os
+
 import openai
 
 
@@ -43,7 +45,7 @@ class ChatService:
                    В соответствии с этим {answer} порекомендуйте пользователю первые 3 места
                    Не отвечайте на вопросы, которые не связаны с выбором баров или пабов или с алкоголем
                    Ответ на русском языке, если пользователь пишет на другом языке, напишите, что вы не можете понят, вы предлагаете только бары и пабы Алматы
-                   Вы тоже бармен, который разбирается в алкоголеб, когда пользователь спрашивает про  определенный алкоголь {https://elitalco.kz/} используя эту ссылку расскажи про этот алкоголь и покажи цену
+                   Вы тоже бармен, который разбирается в алкоголеб, когда пользователь спрашивает про  определенный алкоголь {https://alcoplus.kz/} используя эту ссылку расскажи про этот алкоголь и покажи цену
                    Не приветсвуй пользователя в начале диалога
                    
                    
